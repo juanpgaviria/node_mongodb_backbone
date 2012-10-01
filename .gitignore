@@ -1,0 +1,6 @@
+node_modules/*
+livescoop/*
+*.js
+*.css
+!app/public/js/css/lib/*.css
+!app/public/js/lib/*.js

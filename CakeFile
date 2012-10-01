@@ -1,0 +1,36 @@
+fs = require 'fs'
+
+{print} = require 'sys'
+{spawn} = require 'child_process'
+
+build = (callback) ->
+  coffee = spawn 'coffee', ['-cb', '-o', './app', './app/coffee']
+  coffee.stderr.on 'data', (data) ->
+    process.stderr.write data.toString()
+  coffee.stdout.on 'data', (data) ->
+    print data.toString()
+  coffee.on 'exit', (code) ->
+    callback?() if code is 0
+
+
+# build all the coffee to js
+task 'build', 'Build app/ from app/coffee', ->
+  build()
+
+
+# watch coffee fiels to re-compile on change
+task 'watch', 'Watch app/coffee for changes', ->
+  coffee = spawn 'coffee', ['-w', '-cb', '-o', './app', './app/coffee']
+  coffee.stderr.on 'data', (data) ->
+    process.stderr.write data.toString()
+  coffee.stdout.on 'data', (data) ->
+    print data.toString()
+      
+      
+# test the code
+task 'test', 'Thes the node.js and backbone.js', ->
+  coffee = spawn 'mocha', ['app/test/']
+  coffee.stderr.on 'data', (data) ->
+    process.stderr.write data.toString()
+  coffee.stdout.on 'data', (data) ->
+    print data.toString()
